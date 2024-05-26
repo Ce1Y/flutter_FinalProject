@@ -24,8 +24,7 @@ class CharacterTile extends StatelessWidget {
             SizedBox(
               height: 200,
               child: Image.network(
-                  'https://jojos-bizarre-api.netlify.app/assets/' +
-                      character.image),
+                  'https://jojos-bizarre-api.netlify.app/assets/${character.image}'),
             ),
             Text(
               character.name.isEmpty ? "Not found`" : character.name,
