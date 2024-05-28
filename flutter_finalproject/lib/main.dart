@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Jojo百科'),
+      home: const MyHomePage(title: 'Jojo圖鑑'),
     );
   }
 }
@@ -38,7 +38,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late Future<List<Character>> futureCharacters;
-  bool isLoading = true;
 
   @override
   initState() {
@@ -55,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
       List<Character> characters = List<Character>.from(jsonResponse.map(
         (i) => Character.fromJson(i),
       ));
+      // show success message
       Fluttertoast.showToast(
         msg: "success",
         toastLength: Toast.LENGTH_LONG,
@@ -64,11 +64,9 @@ class _MyHomePageState extends State<MyHomePage> {
         textColor: Colors.white,
         fontSize: 12,
       );
-      setState(() {
-        isLoading = false;
-      });
       return characters;
     } else {
+      // show failure message
       Fluttertoast.showToast(
         msg: "fail",
         toastLength: Toast.LENGTH_LONG,
@@ -78,9 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
         textColor: Colors.white,
         fontSize: 12,
       );
-      setState(() {
-        isLoading = false;
-      });
       throw Exception('Failed to load characters');
     }
   }
@@ -121,7 +116,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                     ),
-                    const Text("幻影血脈"),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Text("第一部–幻影血脈", style: TextStyle(fontSize: 20)),
+                    ),
                     // "phantom blood" listView
                     SizedBox(
                       height: 300,
@@ -136,7 +134,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               shrinkWrap: true,
                               itemBuilder: (context, int index) {
                                 var character = characters[index];
-                                print(character.name);
                                 if (int.parse(character.id) <= 9) {
                                   return CharacterTile(character: character);
                                 } else {
@@ -156,7 +153,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 1,
                       color: Colors.black,
                     ),
-                    const Text("戰鬥潮流"),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Text("第二部–戰鬥潮流", style: TextStyle(fontSize: 20)),
+                    ),
                     // "Battle Tendency" listView
                     SizedBox(
                       height: 300,
@@ -172,12 +172,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               shrinkWrap: true,
                               itemBuilder: (context, int index) {
                                 var character = characters[index];
-                                print(index);
                                 if (character.chapter
                                     .contains("Battle Tendency")) {
                                   return CharacterTile(character: character);
                                 } else {
-                                  print('do');
                                   return Divider();
                                 }
                               },
@@ -194,7 +192,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 1,
                       color: Colors.black,
                     ),
-                    const Text("星辰遠征軍"),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Text("第三部–星塵遠征軍", style: TextStyle(fontSize: 20)),
+                    ),
                     // "Stardust Crusaders" listView
                     SizedBox(
                       height: 300,
@@ -209,8 +210,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
                                 var character = characters[index];
-                                if (character.chapter
-                                    .contains("Stardust Crusaders")) {
+                                if ((int.parse(character.id) >= 18 &&
+                                        int.parse(character.id) <= 47) ||
+                                    character.name == "Dio Brando") {
                                   return CharacterTile(character: character);
                                 }
                                 return Divider();
@@ -228,7 +230,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 1,
                       color: Colors.black,
                     ),
-                    const Text("不滅鑽石"),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Text("第四部–不滅鑽石", style: TextStyle(fontSize: 20)),
+                    ),
                     // "Diamond is Unbreakable" listView
                     SizedBox(
                       height: 300,
@@ -243,11 +248,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
                                 var character = characters[index];
-                                if (character.chapter
-                                    .contains('Diamond Is Unbreakable')) {
+                                // if (character.chapter
+                                //     .contains('Diamond is Unbreakable')) {
+                                if (int.parse(character.id) >= 48 &&
+                                    int.parse(character.id) <= 74) {
                                   return CharacterTile(character: character);
                                 }
-                                return null;
+                                // }
+                                return Divider();
                               },
                             );
                           } else if (snapshot.hasError) {
@@ -262,7 +270,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 1,
                       color: Colors.black,
                     ),
-                    const Text("黃金之風"),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Text("第五部–黃金之風", style: TextStyle(fontSize: 20)),
+                    ),
                     // "Vento Aureo" listView
                     SizedBox(
                       height: 300,
@@ -277,10 +288,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
                                 var character = characters[index];
-                                if (character.chapter.contains('Vento Aureo')) {
+                                if (int.parse(character.id) >= 75 &&
+                                    int.parse(character.id) <= 100) {
                                   return CharacterTile(character: character);
                                 }
-                                return null;
+                                return Divider();
                               },
                             );
                           } else if (snapshot.hasError) {
@@ -295,7 +307,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 1,
                       color: Colors.black,
                     ),
-                    const Text("石之海"),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Text("第六部–石之海", style: TextStyle(fontSize: 20)),
+                    ),
                     // "Stone Ocean" listView
                     SizedBox(
                       height: 300,
@@ -310,10 +325,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
                                 var character = characters[index];
-                                if (character.chapter.contains('Stone Ocean')) {
+                                if (int.parse(character.id) >= 101 &&
+                                    int.parse(character.id) <= 122) {
                                   return CharacterTile(character: character);
                                 }
-                                return null;
+                                return Divider();
                               },
                             );
                           } else if (snapshot.hasError) {
@@ -328,7 +344,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 1,
                       color: Colors.black,
                     ),
-                    const Text("飆馬野郎"),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Text("第七部–飆馬野郎", style: TextStyle(fontSize: 20)),
+                    ),
                     // "Steel Ball Run" listView
                     SizedBox(
                       height: 300,
@@ -343,11 +362,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
                                 var character = characters[index];
-                                if (character.chapter
-                                    .contains('Steel Ball Run')) {
+                                if (int.parse(character.id) >= 123 &&
+                                    int.parse(character.id) <= 149) {
                                   return CharacterTile(character: character);
                                 }
-                                return null;
+                                return Divider();
                               },
                             );
                           } else if (snapshot.hasError) {
@@ -362,7 +381,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 1,
                       color: Colors.black,
                     ),
-                    const Text("JoJo福音"),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Text("第八部–JoJo福音", style: TextStyle(fontSize: 20)),
+                    ),
                     // "Jojolion" listView
                     SizedBox(
                       height: 300,
@@ -371,17 +393,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             var characters = snapshot.data!;
-                            print(characters.length);
                             return ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: characters.length,
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
                                 var character = characters[index];
-                                if (character.chapter.contains('Jojolion')) {
+                                if (int.parse(character.id) >= 150 &&
+                                    int.parse(character.id) <= 175) {
                                   return CharacterTile(character: character);
                                 }
-                                return null;
+                                return Divider();
                               },
                             );
                           } else if (snapshot.hasError) {
