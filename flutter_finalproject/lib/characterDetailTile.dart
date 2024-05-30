@@ -62,20 +62,20 @@ class _CharacterDetailTile extends State<CharacterDetailTile> {
                         height: 300,
                         width: 150,
                         child: Align(
-                          alignment: Alignment.topCenter,
+                          alignment: Alignment.center,
                           child: image,
                         ),
                       ),
-                      const SizedBox(
-                        width: 50,
-                      ),
+                      // const SizedBox(
+                      //   width: 50,
+                      // ),
                       Flexible(
                         child: SizedBox(
                           height: 300,
                           child: SingleChildScrollView(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Text('名稱：${widget.character.name}'),
                                 Text('日本名：${widget.character.japaneseName}'),

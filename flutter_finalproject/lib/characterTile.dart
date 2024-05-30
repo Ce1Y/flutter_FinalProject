@@ -89,6 +89,7 @@ class _CharacterTile extends State<CharacterTile> {
       },
       //TODO: No hover detection
       //TODO: MouseRegion only has onEnter, onExit and onHover, no onTap function
+      //TODO: Solution: let front and rear side both use inkwell with card be the child
       // onHover: (value) => setState(() => _showFrontSide = !_showFrontSide),
       onLongPress: () => setState(() => _showFrontSide = !_showFrontSide),
       child: AnimatedSwitcher(
