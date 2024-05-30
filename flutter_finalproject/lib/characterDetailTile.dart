@@ -30,6 +30,7 @@ class _CharacterDetailTile extends State<CharacterDetailTile> {
             'https://jojos-bizarre-api.netlify.app/assets/${widget.character.image}'));
   }
 
+// Fetch stand json by api
   Future<Stand> fetchStand() async {
     var response = await http.get(Uri.parse(
         'https://stand-by-me.herokuapp.com/api/v1/stands/query/query?standUser=${widget.character.id}'));
@@ -44,6 +45,7 @@ class _CharacterDetailTile extends State<CharacterDetailTile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // background color
       body: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
@@ -58,6 +60,7 @@ class _CharacterDetailTile extends State<CharacterDetailTile> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // character image
                       SizedBox(
                         height: 300,
                         width: 150,
@@ -66,24 +69,31 @@ class _CharacterDetailTile extends State<CharacterDetailTile> {
                           child: image,
                         ),
                       ),
-                      // const SizedBox(
-                      //   width: 50,
-                      // ),
+                      // space between character's image and profile
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      // character profile
                       Flexible(
-                        child: SizedBox(
-                          height: 300,
+                        child: Container(
+                          padding: const EdgeInsets.all(5.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.purple),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
                           child: SingleChildScrollView(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text('名稱：${widget.character.name}'),
-                                Text('日本名：${widget.character.japaneseName}'),
+                                Text('姓氏：${widget.character.name}'),
+                                Text('日本姓氏：${widget.character.japaneseName}'),
                                 Text('能力：${widget.character.abilities}'),
                                 Text('國籍：${widget.character.nationality}'),
-                                Text('名言：${widget.character.catchphrase}'),
+                                Text('口號：${widget.character.catchphrase}'),
                                 Text('出現章節：${widget.character.chapter}'),
-                                Text('是否為人類：${widget.character.isHuman}'),
+                                Text('人類與否：${widget.character.isHuman}'),
                                 Text('生死：${widget.character.living}'),
                               ],
                             ),
