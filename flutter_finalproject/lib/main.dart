@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_finalproject/searchAnchor.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_finalproject/character.dart';
 import 'package:flutter_finalproject/characterTile.dart';
+import 'package:flutter_finalproject/characterDetailTile.dart';
+import 'package:flutter_finalproject/searchAnchor.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,10 +41,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late Future<List<Character>> futureCharacters;
+  String searchTerm = '';
+  final SearchController controller = SearchController();
 
   @override
   initState() {
     super.initState();
+    // FocusScope.of(context).requestFocus(null);
     futureCharacters = fetchCharacters();
   }
 
@@ -100,10 +106,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     Container(
                       color: Colors.purple,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 5),
                             child: Text(
                               widget.title,
                               style: const TextStyle(
@@ -113,6 +120,71 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             ),
                           ),
+                          IconButton(
+                            icon: Icon(Icons.search),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SearchAnchorAsyncExampleApp(),
+                                ),
+                              );
+                            },
+                          ),
+                          // Expanded(
+                          //   child: Container(
+                          //     height: 30,
+                          //     child: SearchAnchor(
+                          //       builder: (context, controller) {
+                          //         return SearchBar(
+                          //           leading: const Icon(Icons.search),
+                          //           controller: controller,
+                          //           hintText: 'Enter character name',
+                          //           textInputAction: TextInputAction.search,
+                          //           onSubmitted: (value) {
+                          //             searchTerm = value;
+                          //           },
+                          //         );
+                          //       },
+                          //       // Show all of the suggestions containing input text
+                          //       suggestionsBuilder:
+                          //           (context, controller) async {
+                          //         // Get all of the name contain search term
+                          //         List<Character> characters = [];
+                          //         for (var character
+                          //             in await futureCharacters) {
+                          //           if (character.name
+                          //               .contains(controller.text)) {
+                          //             characters.add(character);
+                          //           }
+                          //         }
+                          //         // Return all of the suggestions
+                          //         return List<ListTile>.generate(
+                          //           characters.length,
+                          //           (int index) {
+                          //             final String name =
+                          //                 characters[index].name;
+                          //             return ListTile(
+                          //               title: Text(name),
+                          //               onTap: () {
+                          //                 Navigator.push(
+                          //                   context,
+                          //                   MaterialPageRoute(
+                          //                     builder: (context) =>
+                          //                         CharacterDetailTile(
+                          //                             character:
+                          //                                 characters[index]),
+                          //                   ),
+                          //                 );
+                          //               },
+                          //             );
+                          //           },
+                          //         );
+                          //       },
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
