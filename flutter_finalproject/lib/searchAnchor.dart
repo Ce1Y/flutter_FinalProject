@@ -45,14 +45,15 @@ class _AsyncSearchAnchorState extends State<_AsyncSearchAnchor> {
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
+                  // If this widget return another materialApp, it'll return a black screen.
                   Navigator.pop(context);
-                  // Navigator.of(context, rootNavigator: true).pop(context);
                 },
               ),
               controller: controller,
               hintText: 'Search music',
               shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+                const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+              ),
               elevation: MaterialStateProperty.all(0),
               autoFocus: true,
               textInputAction: TextInputAction.search,
