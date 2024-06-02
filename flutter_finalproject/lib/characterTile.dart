@@ -16,6 +16,7 @@ class _CharacterTile extends State<CharacterTile> {
   late bool _showFrontSide;
   late bool _flipXAxis;
 
+  @override
   initState() {
     super.initState();
     _flipXAxis = true;

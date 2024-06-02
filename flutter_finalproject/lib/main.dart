@@ -108,6 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // Title
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 5, horizontal: 5),
@@ -120,14 +121,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             ),
                           ),
+                          // Search button
                           IconButton(
-                            icon: Icon(Icons.search),
+                            icon: const Icon(Icons.search),
                             onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      SearchAnchorAsyncExampleApp(),
+                                  builder: (context) => AsyncSearchAnchor(
+                                      futureCharacters: futureCharacters),
                                 ),
                               );
                             },

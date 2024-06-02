@@ -1,95 +1,125 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_finalproject/character.dart';
+import 'package:flutter_finalproject/characterDetailTile.dart';
 
 /// Flutter code sample for [SearchAnchor].
 
 const Duration fakeAPIDuration = Duration(seconds: 1);
 
-void main() => runApp(const SearchAnchorAsyncExampleApp());
+class AsyncSearchAnchor extends StatefulWidget {
+  const AsyncSearchAnchor({super.key, required this.futureCharacters});
 
-class SearchAnchorAsyncExampleApp extends StatelessWidget {
-  const SearchAnchorAsyncExampleApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Center(
-        child: _AsyncSearchAnchor(),
-      ),
-    );
-  }
-}
-
-class _AsyncSearchAnchor extends StatefulWidget {
-  const _AsyncSearchAnchor();
+  final Future<List<Character>> futureCharacters;
 
   @override
-  State<_AsyncSearchAnchor> createState() => _AsyncSearchAnchorState();
+  State<AsyncSearchAnchor> createState() => _AsyncSearchAnchorState();
 }
 
-class _AsyncSearchAnchorState extends State<_AsyncSearchAnchor> {
+class _AsyncSearchAnchorState extends State<AsyncSearchAnchor> {
   // The query currently being searched for. If null, there is no pending
   // request.
   String? _searchingWithQuery;
+  late List<Character> _characters;
 
   // The most recent options received from the API.
   late Iterable<Widget> _lastOptions = <Widget>[];
 
   @override
+  initState() {
+    super.initState();
+    getCharacterList();
+  }
+
+  Future<List<Character>> convertListType() {
+    return widget.futureCharacters;
+  }
+
+  void getCharacterList() async {
+    _characters = await convertListType();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: SearchAnchor(
-          builder: (BuildContext context, SearchController controller) {
-            return SearchBar(
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  // If this widget return another materialApp, it'll return a black screen.
-                  Navigator.pop(context);
-                },
-              ),
-              controller: controller,
-              hintText: 'Search music',
-              shape: MaterialStateProperty.all(
-                const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-              ),
-              elevation: MaterialStateProperty.all(0),
-              autoFocus: true,
-              textInputAction: TextInputAction.search,
-              onSubmitted: (value) {
-                setState(() {});
-              },
-            );
-          },
-          suggestionsBuilder:
-              (BuildContext context, SearchController controller) async {
-            _searchingWithQuery = controller.text;
-            final List<String> options =
-                (await _FakeAPI.search(_searchingWithQuery!)).toList();
-
-            // If another search happened after this one, throw away these options.
-            // Use the previous options instead and wait for the newer request to
-            // finish.
-            if (_searchingWithQuery != controller.text) {
-              return _lastOptions;
-            }
-
-            _lastOptions = List<ListTile>.generate(
-              options.length,
-              (int index) {
-                final String item = options[index];
-                return ListTile(
-                  title: Text(item),
-                  onTap: () {
-                    print("tapped");
+    return Scaffold(
+      body: SafeArea(
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: SearchAnchor(
+            builder: (BuildContext context, SearchController controller) {
+              return SearchBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    // If this widget return another materialApp, it'll return a black screen.
+                    Navigator.pop(context);
                   },
-                );
-              },
-            );
+                ),
+                controller: controller,
+                hintText: 'Search character',
+                shape: MaterialStateProperty.all(
+                  const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+                ),
+                // onChanged: (value) => {controller.openView()},
+                onChanged: (value) => {print(value)},
+                elevation: MaterialStateProperty.all(0),
+                autoFocus: true,
+                textInputAction: TextInputAction.search,
+                onSubmitted: (value) {
+                  // print(value);
+                  bool isExist = false;
+                  late var charac;
+                  for (var character in _characters) {
+                    // if (character.name.contains(value)) {
+                    if (character.name.toLowerCase() == value.toLowerCase()) {
+                      isExist = true;
+                      charac = character;
+                      break;
+                    }
+                  }
 
-            return _lastOptions;
-          },
+                  if (isExist) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CharacterDetailTile(character: charac),
+                      ),
+                    );
+                  }
+                  setState(() {});
+                },
+              );
+            },
+            suggestionsBuilder:
+                (BuildContext context, SearchController controller) async {
+              print(controller.text);
+              _searchingWithQuery = controller.text;
+              final List<String> options =
+                  (await _FakeAPI.search(_searchingWithQuery!)).toList();
+
+              // If another search happened after this one, throw away these options.
+              // Use the previous options instead and wait for the newer request to
+              // finish.
+              if (_searchingWithQuery != controller.text) {
+                return _lastOptions;
+              }
+
+              _lastOptions = List<ListTile>.generate(
+                options.length,
+                (int index) {
+                  final String item = options[index];
+                  return ListTile(
+                    title: Text(item),
+                    onTap: () {
+                      print("tapped");
+                    },
+                  );
+                },
+              );
+
+              return _lastOptions;
+            },
+          ),
         ),
       ),
     );
