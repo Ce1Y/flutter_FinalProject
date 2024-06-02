@@ -42,9 +42,11 @@ class _AsyncSearchAnchorState extends State<AsyncSearchAnchor> {
 
   void fetchSuggestionsList(String keyword) {
     _suggestionCharacters.clear();
-    for (var character in _futureCharacters) {
-      if (character.name.toLowerCase().contains(keyword.toLowerCase())) {
-        _suggestionCharacters.add(character);
+    if (keyword != "") {
+      for (var character in _futureCharacters) {
+        if (character.name.toLowerCase().contains(keyword.toLowerCase())) {
+          _suggestionCharacters.add(character);
+        }
       }
     }
   }
