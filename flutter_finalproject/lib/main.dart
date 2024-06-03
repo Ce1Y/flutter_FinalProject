@@ -51,7 +51,14 @@ class _MyHomePageState extends State<MyHomePage> {
     futureCharacters = fetchCharacters();
   }
 
-  // fetch jojo characters
+  Future<void> refresh() async {
+    setState(() {
+      futureCharacters = fetchCharacters();
+    });
+    await futureCharacters;
+  }
+
+  // fetch JoJo characters
   Future<List<Character>> fetchCharacters() async {
     var response = await http
         .get(Uri.parse('https://stand-by-me.herokuapp.com/api/v1/characters'));
@@ -89,6 +96,27 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "JoJo圖鑑",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.purple,
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.search, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      AsyncSearchAnchor(futureCharacters: futureCharacters),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       // disable swipe to navigate back
       body: PopScope(
         canPop: false,
@@ -97,397 +125,359 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Colors.purple[100],
           ),
           child: SafeArea(
-            child: SingleChildScrollView(
+            child: RefreshIndicator(
+              onRefresh: refresh,
               child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    // title
-                    Container(
-                      color: Colors.purple,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Title
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 5),
-                            child: Text(
-                              widget.title,
-                              style: const TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      // "phantom blood" title
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          "第一部–幻影血脈",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'NotoSerifTC',
                           ),
-                          // Search button
-                          IconButton(
-                            icon: const Icon(Icons.search),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AsyncSearchAnchor(
-                                      futureCharacters: futureCharacters),
-                                ),
+                        ),
+                      ),
+                      // "phantom blood" listView
+                      SizedBox(
+                        height: 300,
+                        child: FutureBuilder<List<Character>>(
+                          future: futureCharacters,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              var characters = snapshot.data!;
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: characters.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, int index) {
+                                  var character = characters[index];
+                                  if (int.parse(character.id) <= 9) {
+                                    return CharacterTile(character: character);
+                                  } else {
+                                    return null;
+                                  }
+                                },
                               );
-                            },
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            }
+                            return const CircularProgressIndicator();
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      const Divider(
+                        height: 1,
+                        color: Colors.black,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          "第二部–戰鬥潮流",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'NotoSerifTC',
                           ),
-                          // Expanded(
-                          //   child: Container(
-                          //     height: 30,
-                          //     child: SearchAnchor(
-                          //       builder: (context, controller) {
-                          //         return SearchBar(
-                          //           leading: const Icon(Icons.search),
-                          //           controller: controller,
-                          //           hintText: 'Enter character name',
-                          //           textInputAction: TextInputAction.search,
-                          //           onSubmitted: (value) {
-                          //             searchTerm = value;
-                          //           },
-                          //         );
-                          //       },
-                          //       // Show all of the suggestions containing input text
-                          //       suggestionsBuilder:
-                          //           (context, controller) async {
-                          //         // Get all of the name contain search term
-                          //         List<Character> characters = [];
-                          //         for (var character
-                          //             in await futureCharacters) {
-                          //           if (character.name
-                          //               .contains(controller.text)) {
-                          //             characters.add(character);
-                          //           }
-                          //         }
-                          //         // Return all of the suggestions
-                          //         return List<ListTile>.generate(
-                          //           characters.length,
-                          //           (int index) {
-                          //             final String name =
-                          //                 characters[index].name;
-                          //             return ListTile(
-                          //               title: Text(name),
-                          //               onTap: () {
-                          //                 Navigator.push(
-                          //                   context,
-                          //                   MaterialPageRoute(
-                          //                     builder: (context) =>
-                          //                         CharacterDetailTile(
-                          //                             character:
-                          //                                 characters[index]),
-                          //                   ),
-                          //                 );
-                          //               },
-                          //             );
-                          //           },
-                          //         );
-                          //       },
-                          //     ),
-                          //   ),
-                          // ),
-                        ],
+                        ),
                       ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Text("第一部–幻影血脈", style: TextStyle(fontSize: 20)),
-                    ),
-                    // "phantom blood" listView
-                    SizedBox(
-                      height: 300,
-                      child: FutureBuilder<List<Character>>(
-                        future: futureCharacters,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            var characters = snapshot.data!;
-                            return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: characters.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, int index) {
-                                var character = characters[index];
-                                if (int.parse(character.id) <= 9) {
-                                  return CharacterTile(character: character);
-                                } else {
-                                  return null;
-                                }
-                              },
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('${snapshot.error}');
-                          }
-                          return const CircularProgressIndicator();
-                        },
+                      // "Battle Tendency" listView
+                      SizedBox(
+                        height: 300,
+                        child: FutureBuilder<List<Character>>(
+                          future: futureCharacters,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              var characters = snapshot.data!;
+                              int count = characters.length;
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: count,
+                                shrinkWrap: true,
+                                itemBuilder: (context, int index) {
+                                  var character = characters[index];
+                                  if (character.chapter
+                                      .contains("Battle Tendency")) {
+                                    return CharacterTile(character: character);
+                                  } else {
+                                    return Divider();
+                                  }
+                                },
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            }
+                            return const CircularProgressIndicator();
+                          },
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Divider(
-                      height: 1,
-                      color: Colors.black,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Text("第二部–戰鬥潮流", style: TextStyle(fontSize: 20)),
-                    ),
-                    // "Battle Tendency" listView
-                    SizedBox(
-                      height: 300,
-                      child: FutureBuilder<List<Character>>(
-                        future: futureCharacters,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            var characters = snapshot.data!;
-                            int count = characters.length;
-                            return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: count,
-                              shrinkWrap: true,
-                              itemBuilder: (context, int index) {
-                                var character = characters[index];
-                                if (character.chapter
-                                    .contains("Battle Tendency")) {
-                                  return CharacterTile(character: character);
-                                } else {
+                      const SizedBox(height: 5),
+                      const Divider(
+                        height: 1,
+                        color: Colors.black,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          "第三部–星塵遠征軍",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'NotoSerifTC',
+                          ),
+                        ),
+                      ),
+                      // "Stardust Crusaders" listView
+                      SizedBox(
+                        height: 300,
+                        child: FutureBuilder<List<Character>>(
+                          future: futureCharacters,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              var characters = snapshot.data!;
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: characters.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  var character = characters[index];
+                                  if ((int.parse(character.id) >= 18 &&
+                                          int.parse(character.id) <= 47) ||
+                                      character.name == "Dio Brando") {
+                                    return CharacterTile(character: character);
+                                  }
                                   return Divider();
-                                }
-                              },
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('${snapshot.error}');
-                          }
-                          return const CircularProgressIndicator();
-                        },
+                                },
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            }
+                            return const CircularProgressIndicator();
+                          },
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Divider(
-                      height: 1,
-                      color: Colors.black,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Text("第三部–星塵遠征軍", style: TextStyle(fontSize: 20)),
-                    ),
-                    // "Stardust Crusaders" listView
-                    SizedBox(
-                      height: 300,
-                      child: FutureBuilder<List<Character>>(
-                        future: futureCharacters,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            var characters = snapshot.data!;
-                            return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: characters.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                var character = characters[index];
-                                if ((int.parse(character.id) >= 18 &&
-                                        int.parse(character.id) <= 47) ||
-                                    character.name == "Dio Brando") {
-                                  return CharacterTile(character: character);
-                                }
-                                return Divider();
-                              },
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('${snapshot.error}');
-                          }
-                          return const CircularProgressIndicator();
-                        },
+                      const SizedBox(height: 5),
+                      const Divider(
+                        height: 1,
+                        color: Colors.black,
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Divider(
-                      height: 1,
-                      color: Colors.black,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Text("第四部–不滅鑽石", style: TextStyle(fontSize: 20)),
-                    ),
-                    // "Diamond is Unbreakable" listView
-                    SizedBox(
-                      height: 300,
-                      child: FutureBuilder<List<Character>>(
-                        future: futureCharacters,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            var characters = snapshot.data!;
-                            return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: characters.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                var character = characters[index];
-                                // if (character.chapter
-                                //     .contains('Diamond is Unbreakable')) {
-                                if (int.parse(character.id) >= 48 &&
-                                    int.parse(character.id) <= 74) {
-                                  return CharacterTile(character: character);
-                                }
-                                // }
-                                return Divider();
-                              },
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('${snapshot.error}');
-                          }
-                          return const CircularProgressIndicator();
-                        },
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          "第四部–不滅鑽石",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'NotoSerifTC',
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Divider(
-                      height: 1,
-                      color: Colors.black,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Text("第五部–黃金之風", style: TextStyle(fontSize: 20)),
-                    ),
-                    // "Vento Aureo" listView
-                    SizedBox(
-                      height: 300,
-                      child: FutureBuilder<List<Character>>(
-                        future: futureCharacters,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            var characters = snapshot.data!;
-                            return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: characters.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                var character = characters[index];
-                                if (int.parse(character.id) >= 75 &&
-                                    int.parse(character.id) <= 100) {
-                                  return CharacterTile(character: character);
-                                }
-                                return Divider();
-                              },
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('${snapshot.error}');
-                          }
-                          return const CircularProgressIndicator();
-                        },
+                      // "Diamond is Unbreakable" listView
+                      SizedBox(
+                        height: 300,
+                        child: FutureBuilder<List<Character>>(
+                          future: futureCharacters,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              var characters = snapshot.data!;
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: characters.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  var character = characters[index];
+                                  // if (character.chapter
+                                  //     .contains('Diamond is Unbreakable')) {
+                                  if (int.parse(character.id) >= 48 &&
+                                      int.parse(character.id) <= 74) {
+                                    return CharacterTile(character: character);
+                                  }
+                                  // }
+                                  return Divider();
+                                },
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            }
+                            return const CircularProgressIndicator();
+                          },
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Divider(
-                      height: 1,
-                      color: Colors.black,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Text("第六部–石之海", style: TextStyle(fontSize: 20)),
-                    ),
-                    // "Stone Ocean" listView
-                    SizedBox(
-                      height: 300,
-                      child: FutureBuilder<List<Character>>(
-                        future: futureCharacters,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            var characters = snapshot.data!;
-                            return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: characters.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                var character = characters[index];
-                                if (int.parse(character.id) >= 101 &&
-                                    int.parse(character.id) <= 122) {
-                                  return CharacterTile(character: character);
-                                }
-                                return Divider();
-                              },
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('${snapshot.error}');
-                          }
-                          return const CircularProgressIndicator();
-                        },
+                      const SizedBox(height: 5),
+                      const Divider(
+                        height: 1,
+                        color: Colors.black,
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Divider(
-                      height: 1,
-                      color: Colors.black,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Text("第七部–飆馬野郎", style: TextStyle(fontSize: 20)),
-                    ),
-                    // "Steel Ball Run" listView
-                    SizedBox(
-                      height: 300,
-                      child: FutureBuilder<List<Character>>(
-                        future: futureCharacters,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            var characters = snapshot.data!;
-                            return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: characters.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                var character = characters[index];
-                                if (int.parse(character.id) >= 123 &&
-                                    int.parse(character.id) <= 149) {
-                                  return CharacterTile(character: character);
-                                }
-                                return Divider();
-                              },
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('${snapshot.error}');
-                          }
-                          return const CircularProgressIndicator();
-                        },
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          "第五部–黃金之風",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'NotoSerifTC',
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Divider(
-                      height: 1,
-                      color: Colors.black,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Text("第八部–JoJo福音", style: TextStyle(fontSize: 20)),
-                    ),
-                    // "Jojolion" listView
-                    SizedBox(
-                      height: 300,
-                      child: FutureBuilder<List<Character>>(
-                        future: futureCharacters,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            var characters = snapshot.data!;
-                            return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: characters.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                var character = characters[index];
-                                if (int.parse(character.id) >= 150 &&
-                                    int.parse(character.id) <= 175) {
-                                  return CharacterTile(character: character);
-                                }
-                                return Divider();
-                              },
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('${snapshot.error}');
-                          }
-                          return const CircularProgressIndicator();
-                        },
+                      // "Vento Aureo" listView
+                      SizedBox(
+                        height: 300,
+                        child: FutureBuilder<List<Character>>(
+                          future: futureCharacters,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              var characters = snapshot.data!;
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: characters.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  var character = characters[index];
+                                  if (int.parse(character.id) >= 75 &&
+                                      int.parse(character.id) <= 100) {
+                                    return CharacterTile(character: character);
+                                  }
+                                  return Divider();
+                                },
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            }
+                            return const CircularProgressIndicator();
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 5),
+                      const Divider(
+                        height: 1,
+                        color: Colors.black,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Text("第六部–石之海",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'NotoSerifTC',
+                            )),
+                      ),
+                      // "Stone Ocean" listView
+                      SizedBox(
+                        height: 300,
+                        child: FutureBuilder<List<Character>>(
+                          future: futureCharacters,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              var characters = snapshot.data!;
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: characters.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  var character = characters[index];
+                                  if (int.parse(character.id) >= 101 &&
+                                      int.parse(character.id) <= 122) {
+                                    return CharacterTile(character: character);
+                                  }
+                                  return Divider();
+                                },
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            }
+                            return const CircularProgressIndicator();
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      const Divider(
+                        height: 1,
+                        color: Colors.black,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          "第七部–飆馬野郎",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'NotoSerifTC',
+                          ),
+                        ),
+                      ),
+                      // "Steel Ball Run" listView
+                      SizedBox(
+                        height: 300,
+                        child: FutureBuilder<List<Character>>(
+                          future: futureCharacters,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              var characters = snapshot.data!;
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: characters.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  var character = characters[index];
+                                  if (int.parse(character.id) >= 123 &&
+                                      int.parse(character.id) <= 149) {
+                                    return CharacterTile(character: character);
+                                  }
+                                  return Divider();
+                                },
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            }
+                            return const CircularProgressIndicator();
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      const Divider(
+                        height: 1,
+                        color: Colors.black,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          "第八部–JoJo福音",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'NotoSerifTC',
+                          ),
+                        ),
+                      ),
+                      // "Jojolion" listView
+                      SizedBox(
+                        height: 300,
+                        child: FutureBuilder<List<Character>>(
+                          future: futureCharacters,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              var characters = snapshot.data!;
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: characters.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  var character = characters[index];
+                                  if (int.parse(character.id) >= 150 &&
+                                      int.parse(character.id) <= 175) {
+                                    return CharacterTile(character: character);
+                                  }
+                                  return Divider();
+                                },
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            }
+                            return const CircularProgressIndicator();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -92,3 +92,24 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: NotoSerifTC
+      fonts:
+        - asset: assets/fonts/NotoSerifTC-VariableFont_wght.ttf
+          weight: 100
+        - asset: assets/fonts/NotoSerifTC-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/NotoSerifTC-Light.ttf
+          weight: 300
+        - asset: assets/fonts/NotoSerifTC-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSerifTC-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSerifTC-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/NotoSerifTC-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/NotoSerifTC-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/NotoSerifTC-Black.ttf
+          weight: 900
