@@ -31,13 +31,13 @@ class _AsyncSearchAnchorState extends State<AsyncSearchAnchor> {
     getCharacterList();
   }
 
+  void getCharacterList() async {
+    _futureCharacters = await convertListType();
+  }
+
   // Convert future type list to common list
   Future<List<Character>> convertListType() {
     return widget.futureCharacters;
-  }
-
-  void getCharacterList() async {
-    _futureCharacters = await convertListType();
   }
 
   void fetchSuggestionsList(String keyword) {
@@ -63,10 +63,11 @@ class _AsyncSearchAnchorState extends State<AsyncSearchAnchor> {
                 builder: (BuildContext context, SearchController controller) {
                   // Search bar
                   return SearchBar(
+                    // navigate back button
                     leading: IconButton(
                       icon: const Icon(Icons.arrow_back),
                       onPressed: () {
-                        // If this widget return another materialApp, it'll return a black screen.
+                        // Hint: if this widget return another materialApp, it'll return a black screen.
                         Navigator.pop(context);
                       },
                     ),
@@ -76,7 +77,6 @@ class _AsyncSearchAnchorState extends State<AsyncSearchAnchor> {
                       const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero),
                     ),
-                    // onChanged: (value) => {controller.openView()},
                     onChanged: (value) => {
                       setState(() {
                         fetchSuggestionsList(value);
@@ -86,11 +86,9 @@ class _AsyncSearchAnchorState extends State<AsyncSearchAnchor> {
                     autoFocus: true,
                     textInputAction: TextInputAction.search,
                     onSubmitted: (value) {
-                      // print(value);
                       bool isExist = false;
                       late Character navigateCharacter;
                       for (var character in _futureCharacters) {
-                        // if (character.name.contains(value)) {
                         if (character.name.toLowerCase() ==
                             value.toLowerCase()) {
                           isExist = true;
@@ -107,38 +105,38 @@ class _AsyncSearchAnchorState extends State<AsyncSearchAnchor> {
                           ),
                         );
                       }
-                      // setState(() {});
                     },
                   );
                 },
                 suggestionsBuilder:
                     (BuildContext context, SearchController controller) async {
-                  print(controller.text);
-                  _searchingWithQuery = controller.text;
-                  final List<String> options =
-                      (await _FakeAPI.search(_searchingWithQuery!)).toList();
+                  // print(controller.text);
+                  // _searchingWithQuery = controller.text;
+                  // final List<String> options =
+                  //     (await _FakeAPI.search(_searchingWithQuery!)).toList();
 
-                  // If another search happened after this one, throw away these options.
-                  // Use the previous options instead and wait for the newer request to
-                  // finish.
-                  if (_searchingWithQuery != controller.text) {
-                    return _lastOptions;
-                  }
+                  // // If another search happened after this one, throw away these options.
+                  // // Use the previous options instead and wait for the newer request to
+                  // // finish.
+                  // if (_searchingWithQuery != controller.text) {
+                  //   return _lastOptions;
+                  // }
 
-                  _lastOptions = List<ListTile>.generate(
-                    options.length,
-                    (int index) {
-                      final String item = options[index];
-                      return ListTile(
-                        title: Text(item),
-                        onTap: () {
-                          print("tapped");
-                        },
-                      );
-                    },
-                  );
+                  // _lastOptions = List<ListTile>.generate(
+                  //   options.length,
+                  //   (int index) {
+                  //     final String item = options[index];
+                  //     return ListTile(
+                  //       title: Text(item),
+                  //       onTap: () {
+                  //         print("tapped");
+                  //       },
+                  //     );
+                  //   },
+                  // );
 
-                  return _lastOptions;
+                  // return _lastOptions;
+                  return [];
                 },
               ),
               Expanded(

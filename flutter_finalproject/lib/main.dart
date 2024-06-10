@@ -103,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         backgroundColor: Colors.purple,
         actions: <Widget>[
+          // search button
           IconButton(
             icon: const Icon(Icons.search, color: Colors.white),
             onPressed: () {

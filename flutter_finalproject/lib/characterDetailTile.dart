@@ -31,16 +31,16 @@ class _CharacterDetailTile extends State<CharacterDetailTile> {
   }
 
 // Fetch stand json by api
-  Future<Stand> fetchStand() async {
-    var response = await http.get(Uri.parse(
-        'https://stand-by-me.herokuapp.com/api/v1/stands/query/query?standUser=${widget.character.id}'));
-    if (response.statusCode == 200) {
-      // TODO: handle type cast from List<dynamic> to Map<String, dynamic>
-      return Stand.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
-    } else {
-      throw Exception('Failed to load stand');
-    }
-  }
+  // Future<Stand> fetchStand() async {
+  //   var response = await http.get(Uri.parse(
+  //       'https://stand-by-me.herokuapp.com/api/v1/stands/query/query?standUser=${widget.character.id}'));
+  //   if (response.statusCode == 200) {
+  //     // TODO: handle type cast from List<dynamic> to Map<String, dynamic>
+  //     return Stand.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  //   } else {
+  //     throw Exception('Failed to load stand');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
